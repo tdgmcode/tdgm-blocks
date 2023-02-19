@@ -32,6 +32,8 @@
 </style>
 
 <script>
+    
+
     import { paper } from "paper";
     import { onMount } from 'svelte';
 
@@ -39,6 +41,22 @@
     import Color from './Color.svelte';
     import { Group } from "paper/dist/paper-core";
     import { group_outros } from "svelte/internal";
+
+    let tools = [
+        'edit',
+        'pan',
+        'select',
+        'group',
+        'ungroup',
+        'resize',
+        'rotate',
+        'deleter',
+        'node',
+        'up',
+        'down',
+        'import',
+        'export',
+    ]
 
     let mode = 'edit';
     let colorType = 'stroke';
@@ -49,7 +67,7 @@
     let darkStroke = '#d8d8d8';
     let white = 'white';
 
-    let nodeDist = 45;
+    let nodeDist = 25;
     let grabDist = 15;
     
     let color = strokeColor;
@@ -98,6 +116,10 @@
             exportFile();
         } else if (mode == 'deleter') {
             deleter();
+        } else if (mode == 'up') {
+            layerUp();
+        } else if (mode == 'down') {
+            layerDown();
         }
 
         return mode;
@@ -153,6 +175,18 @@
             initPath();
         }
     }
+
+    let layerDown = () => {
+        paper.project.selectedItems.reverse().forEach(item => {
+            item.sendToBack();
+        })
+    };
+
+    let layerUp = () => {
+        paper.project.selectedItems.forEach(item => {
+            item.bringToFront();
+        })
+    };
 
     let group = () => {
         var group = new paper.Group(paper.project.selectedItems);
@@ -219,7 +253,7 @@
             }
 
             newPoint.selected = true;
-        } else if (mode == 'resize') {
+        } else if (mode == 'resize' || mode == 'rotate') {
             target.selected = !target.selected;
             target.bounds.selected = target.selected;
         }
@@ -302,6 +336,12 @@
                     }
                 }  
             });
+        } else if (mode == 'rotate') {
+            paper.project.selectedItems.forEach(item => {
+                if (!item.bounds.selected) return;
+                var rotAngle = event.point.subtract(item.bounds.center).angle - event.point.add(event.delta).subtract(item.bounds.center).angle;
+                item.rotate(-rotAngle);
+            });
         }
     }
 
@@ -374,16 +414,9 @@
 
 <div class='ide'>
     <div class='ide-left'>
-        <EditButton bindMode={setMode} modeIn={mode} mode={'edit'} />
-        <EditButton bindMode={setMode} modeIn={mode} mode={'pan'} />
-        <EditButton bindMode={setMode} modeIn={mode} mode={'select'} />
-        <EditButton bindMode={setMode} modeIn={mode} mode={'group'} />
-        <EditButton bindMode={setMode} modeIn={mode} mode={'ungroup'} />
-        <EditButton bindMode={setMode} modeIn={mode} mode={'node'} />
-        <EditButton bindMode={setMode} modeIn={mode} mode={'import'} />
-        <EditButton bindMode={setMode} modeIn={mode} mode={'export'} />
-        <EditButton bindMode={setMode} modeIn={mode} mode={'deleter'} />
-        <EditButton bindMode={setMode} modeIn={mode} mode={'resize'} />
+        {#each tools as tool}
+            <EditButton bindMode={setMode} modeIn={mode} mode={tool} />
+        {/each}
     </div>
     <div class='ide-mid'>
         <canvas class='canvas' resize bind:this={canvas}></canvas>
