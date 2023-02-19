@@ -52,7 +52,9 @@
     bind:this={slider}
     on:mousemove={drag} 
     on:mousedown={() => { mouseDown = true; }} 
+    on:touchstart={() => { mouseDown = true; }} 
     on:mouseup={() => { mouseDown = false; }}
+    on:touchstop={() => { mouseDown = false; }}
     on:mouseleave={() => { mouseDown = false; }}
 >
     <div 
