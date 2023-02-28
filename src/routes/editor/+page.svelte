@@ -1,5 +1,5 @@
 <script>
-    import Env from '$lib/ide/Env.svelte'
+    import Env from '$lib/vector/Env.svelte'
 </script>
 
 <Env />
