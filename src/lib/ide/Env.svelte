@@ -34,7 +34,9 @@
 <script>
     
 
-    import { paper } from "paper";
+    import pkg from 'paper';
+    const { paper } = pkg;
+    
     import { onMount } from 'svelte';
 
     import EditButton from '$lib/page/EditButton.svelte';
