@@ -205,6 +205,7 @@
 
     let deleter = () => {
         paper.project.selectedItems.forEach(item => {
+            console.log(item);
             item.remove();
         })
     }
